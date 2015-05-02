@@ -343,7 +343,8 @@ unsigned char * readChannel (struct zip * archive, int * depth) {
 						expression = (unsigned char *)"/grid/@gridSizeZ";
 						break;
 					default:
-						expression = (unsigned char *)"";
+						printf ("\tNo orientation stated. Assuming Y.\n");
+						expression = (unsigned char *)"/grid/@gridSizeY";
 				}
 
 				xpathresult = xmlXPathEvalExpression (expression, context);
