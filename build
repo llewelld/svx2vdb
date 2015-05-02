@@ -1,0 +1,4 @@
+#!/bin/bash
+
+g++ $@.cc -lopenvdb $(pkg-config --libs --cflags OpenEXR tbb libpng libzip libxml-2.0) -o $@
+
