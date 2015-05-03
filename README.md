@@ -53,7 +53,18 @@ The current dependencies for building svx2vdb are:
 1. [libzip](http://www.nih.at/libzip/) for extracting SVX file contents.
 1. [libxml-2.0](http://xmlsoft.org/index.html) for interpreting  the SVX manifest.
 
-If you're using Linux, most if not all of these should be in the repositories (at least this is the case for Ubuntu 14.10 which I'm using here).
+If you're using Linux, most if not all of these should be in the repositories (at least this is the case for Ubuntu 14.10 which I'm using here):
+
+```
+sudo apt-get install autoconf
+sudo apt-get install libopenvdb-dev
+sudo apt-get install libopenvdb-tools
+sudo apt-get install libopenexr-dev
+sudo apt-get install libtbb-dev
+sudo apt-get install libpng12-dev
+sudo apt-get install libzip-dev
+sudo apt-get install libxml2-dev
+```
 
 ## License
 

@@ -12,7 +12,7 @@ sudo apt-get install autoconf
 sudo apt-get install libopenvdb-dev
 sudo apt-get install libopenvdb-tools
 sudo apt-get install libopenexr-dev
-sudo apt-get install libtbb2
+sudo apt-get install libtbb-dev
 sudo apt-get install libpng12-dev
 sudo apt-get install libzip-dev
 sudo apt-get install libxml2-dev
