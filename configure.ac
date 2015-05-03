@@ -18,6 +18,7 @@ PKG_CHECK_MODULES([SVX2VDB], [libpng, libzip, libxml-2.0])
 #AC_CHECK_LIB([openvdb], [openvdb::initialize], [], [AC_MSG_ERROR([The openvdb library is missing.])])
 #AC_CHECK_LIB([symbolic], [CreateInteger], [], [AC_MSG_ERROR([The symbolic library is missing.])])
 
+# See http://nerdland.net/2009/07/detecting-c-libraries-with-autotools/
 AC_MSG_CHECKING([for OpenVDB])
 AC_LANG(C++)
 SAVED_LIBS=$LIBS
