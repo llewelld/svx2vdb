@@ -25,9 +25,6 @@
 ///////////////////////////////////////////////////////////////////
 // Defines
 
-#define ERROR (0)
-#define NOT_PNG (1)
-
 ///////////////////////////////////////////////////////////////////
 // Structures and enumerations
 
@@ -97,9 +94,11 @@ int main (int argc, const char **argv) {
 				loadPNG (& rows, & width, & height, archive, filename);
 				createSlice (*grid, rows, width, height, (z - (depth / 2)));
 				freePNG (rows, height);
+				printf ("\tRead slice %d of %d\r", (z + 1), depth);
+				std::cout.flush();
 			}
 
-			printf ("Saving VDB file: %s\n", argv[2]);
+			printf ("\nSaving VDB file: %s\n", argv[2]);
 			finaliseVDB (grid, argv[2]);
 			xmlFree(slices);
 		}
@@ -120,83 +119,91 @@ int loadPNG (png_byte *** rows, int * width, int * height, struct zip * archive,
 	png_byte header[8];
 	struct zip_file * fp;
 	int is_png;
-	unsigned int png_transforms;
+	//unsigned int png_transforms;
 	int row;
-	png_byte color_type;
-	png_byte bit_depth;
-	png_byte colour;
-	int row_count;
+	//png_byte color_type;
+	//png_byte bit_depth;
+	//png_byte colour;
+	//int row_count;
 	png_structp png_ptr;
+	png_infop end_info;
+
+	png_ptr = NULL;
+	end_info = NULL;
 
 	fp = zip_fopen (archive, filename, 0);
 
 	if (!fp) {
 		printf ("Error reading file\n");
-		return (ERROR);
 	}
+	else {
+		zip_fread (fp, header, number);
+		is_png = !png_sig_cmp (header, 0, number);
 
-	zip_fread (fp, header, number);
-	is_png = !png_sig_cmp (header, 0, number);
-	if (!is_png) {
-		printf ("Not a PNG file\n");
-		return (NOT_PNG);
+		if (!is_png) {
+			printf ("Not a PNG file\n");
+		}
+		else {
+			png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+
+			if (!png_ptr) {
+				printf ("Setup error\n");
+			}
+			else {
+				png_infop info_ptr = png_create_info_struct (png_ptr);
+
+				if (!info_ptr) {
+					printf ("Info creation error\n");
+				}
+				else {
+					end_info = png_create_info_struct (png_ptr);
+
+					if (!end_info) {
+						printf ("End info error\n");
+					}
+					else {
+
+						if (setjmp (png_jmpbuf (png_ptr))) {
+							png_destroy_read_struct (&png_ptr, &info_ptr, &end_info);
+							zip_fclose (fp);
+							printf ("Read error\n");
+							return 0;
+						}
+
+						png_set_read_fn (png_ptr, NULL, readData);
+
+						png_init_io (png_ptr, (png_FILE_p)fp);
+						png_set_sig_bytes (png_ptr, number);
+						png_set_read_status_fn (png_ptr, read_row_callback);
+
+						//png_transforms = PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_INVERT_ALPHA | PNG_TRANSFORM_PACKING;
+
+						png_read_info (png_ptr, info_ptr);
+						*width = png_get_image_width (png_ptr, info_ptr);
+						*height = png_get_image_width (png_ptr, info_ptr);
+
+
+						//png_byte colour_type = png_get_color_type (png_ptr, info_ptr);
+						//bit_depth = png_get_bit_depth (png_ptr, info_ptr);
+
+						*rows = (png_byte **)malloc (sizeof(png_byte *) * *height);
+						for (row = 0; row < *height; row++) {
+							(*rows)[row] = (png_byte *)malloc (png_get_rowbytes(png_ptr, info_ptr));
+						}
+
+						png_read_image (png_ptr, *rows);
+
+						png_read_end (png_ptr, end_info);
+					}
+				}
+
+				png_destroy_read_struct (&png_ptr, &info_ptr, &end_info);
+			}
+		}
+		zip_fclose (fp);
 	}
 	
-	png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	if (!png_ptr) {
-		printf ("Setup error\n");
-		return (ERROR);
-	}
-
-	png_infop info_ptr = png_create_info_struct (png_ptr);
-	if (!info_ptr) {
-		printf ("Info creation error\n");
-		png_destroy_read_struct (&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-		return (ERROR);
-	}
-
-	png_infop end_info = png_create_info_struct (png_ptr);
-	if (!end_info) {
-		printf ("End info error\n");
-		png_destroy_read_struct (&png_ptr, &info_ptr, (png_infopp)NULL);
-		return (ERROR);
-	}
-
-	if (setjmp (png_jmpbuf (png_ptr))) {
-		png_destroy_read_struct (&png_ptr, &info_ptr, &end_info);
-		zip_fclose (fp);
-		printf ("Read error\n");
-		return (ERROR);
-	}
-
-	png_set_read_fn (png_ptr, NULL, readData);
-
-	png_init_io (png_ptr, (png_FILE_p)fp);
-	png_set_sig_bytes (png_ptr, number);
-	png_set_read_status_fn (png_ptr, read_row_callback);
-
-	png_transforms = PNG_TRANSFORM_STRIP_16 | PNG_TRANSFORM_INVERT_ALPHA | PNG_TRANSFORM_PACKING;
-
-	png_read_info (png_ptr, info_ptr);
-	*width = png_get_image_width (png_ptr, info_ptr);
-	*height = png_get_image_width (png_ptr, info_ptr);
-
-
-	png_byte colour_type = png_get_color_type (png_ptr, info_ptr);
-	bit_depth = png_get_bit_depth (png_ptr, info_ptr);
-
-	*rows = (png_byte **)malloc (sizeof(png_byte *) * *height);
-	for (row = 0; row < *height; row++) {
-		(*rows)[row] = (png_byte *)malloc (png_get_rowbytes(png_ptr, info_ptr));
-	}
-
-	png_read_image (png_ptr, *rows);
-
-	png_read_end (png_ptr, end_info);
-
-	zip_fclose (fp);
-
-	png_destroy_read_struct (&png_ptr, &info_ptr, &end_info);
+	return 1;
 }
 
 void freePNG (png_byte ** rows, int height) {
@@ -274,7 +281,7 @@ unsigned char * readChannel (struct zip * archive, int * depth) {
 	}
 	result = zip_stat (archive, "manifest.xml", ZIP_FL_NOCASE, & sb);
 
-	if ((sb.valid & ZIP_STAT_SIZE) != 0) {
+	if ((result == 0) && ((sb.valid & ZIP_STAT_SIZE) != 0)) {
 		data = (char *)malloc (sb.size);
 		if (data != NULL) {
 			fp = zip_fopen (archive, "manifest.xml", 0);
@@ -301,6 +308,7 @@ unsigned char * readChannel (struct zip * archive, int * depth) {
 
 
 				xpathresult = xmlXPathEvalExpression ((unsigned char *)"/grid/@slicesOrientation", context);
+				orient = ORIENTATION_INVALID;
 
 				if (xpathresult != NULL) {
 					if (xpathresult->nodesetval->nodeNr > 0) {
