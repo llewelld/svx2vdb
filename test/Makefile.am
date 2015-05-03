@@ -1,0 +1,3 @@
+# Tests
+TESTS = ./convert.sh
+
