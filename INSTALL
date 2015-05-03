@@ -1,3 +1,45 @@
+Quick instructions
+******************
+
+The svx2vdb tool uses autotool for installation on Linux.
+
+Under Linux
+
+1. Install dependencies. This'll depend on your system, but for me on 
+Ubuntu I used the following:
+
+sudo apt-get install autoconf
+sudo apt-get install libopenvdb-dev
+sudo apt-get install libopenvdb-tools
+sudo apt-get install libopenexr-dev
+sudo apt-get install libtbb2
+sudo apt-get install libpng12-dev
+sudo apt-get install libzip-dev
+sudo apt-get install libxml2-dev
+
+2. Generate makefiles:
+
+./configure
+
+3. Build application:
+
+make
+
+4. Optionally, install application (usually has to be done as root):
+
+sudo make install
+
+6. Run the application:
+
+./svx2vdb examples/urchin.svx out.vdb
+
+Under Windows
+
+I've not tried this yet. If anyone attempts it, I'd be interested to 
+about hear your experiences.
+
+Everything that follows below is the standard FSF install text.
+
 Installation Instructions
 *************************
 

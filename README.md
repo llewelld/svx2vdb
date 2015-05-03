@@ -54,3 +54,18 @@ The current dependencies for building svx2vdb are:
 1. [libxml-2.0](http://xmlsoft.org/index.html) for interpreting  the SVX manifest.
 
 If you're using Linux, most if not all of these should be in the repositories (at least this is the case for Ubuntu 14.10 which I'm using here).
+
+## License
+
+Read COPYING for information on the license. svx2vdb is released under the MIT License.
+
+## Contact and Links
+
+More information can be found at: http://www.flypig.co.uk?to=linux
+The source code is avilable from GitHub: https://github.com/llewelld/svx2vdb
+
+I can be contacted via one of the following.
+
+ * My website: http://www.flypig.co.uk
+ * Email: at david@flypig.co.uk
+

@@ -1,4 +1,6 @@
 #!/bin/bash
 
+# Simple build file for svx2vdb. This is legacy now; use autotools configure instead
+
 g++ $@.cc -lopenvdb $(pkg-config --libs --cflags OpenEXR tbb libpng libzip libxml-2.0) -o $@
 
