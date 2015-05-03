@@ -42,6 +42,8 @@ You can then press the `3` key to show the voxels.
 
 Use `make install` as root to install it into the path.
 
+Use `make check` to run a basic execution test on the code.
+
 ## Dependencies
 
 The current dependencies for building svx2vdb are:
