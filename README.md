@@ -24,6 +24,15 @@ vdb_view outfile.vdb
 ```
 An example SVX file is provided in the **examples** folder. Shapeways also provide a [sphere](http://shapeways.com/rrstatic/files/sphere.svx) example, or you can generate your own files using [Functy](http://functy.sourceforge.net/).
 
+## Screenshots
+
+Converting a Functy shape exported as SVX to OpenVDB, then viewed using vdb_view.
+![svx2vdb Functy object](https://github.com/llewelld/svx2vdb/blob/master/examples/urchin01.png)
+
+Shapeways example [sphere](http://shapeways.com/rrstatic/files/sphere.svx) SVX file, and a Quaternion Julia set created by [shawn_halayka](https://www.shapeways.com/forum/index.php?t=msg&th=27082&start=0&).
+![Exapmple objects](https://github.com/llewelld/svx2vdb/blob/master/examples/vdbview01.png)
+
+
 ## Build Me
 
 You can use the autotools configure script to build svx2vdb on Linux systems. Set the current working directory to the svx2vdb folder, then enter the following.
